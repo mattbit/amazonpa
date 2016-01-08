@@ -1,2 +1,3 @@
-# amazonpa
-Go lang library for Amazon Product Advertising API
+# Amazon PA
+
+A Go lang library to interact with Amazon Product Advertising API.
