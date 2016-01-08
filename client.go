@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -11,6 +12,14 @@ import (
 	"strings"
 	"time"
 )
+
+// ItemLookupQuery describes the allowed parameters for a ItemLookup request
+type ItemLookupQuery struct {
+	ItemIDs        []string
+	IDType         string
+	MerchantID     string
+	ResponseGroups []string
+}
 
 // Client provides the functions to interact with the API
 type Client struct {
@@ -65,7 +74,7 @@ func (client Client) SignRequest(request *Request) {
 }
 
 // ProcessRequest takes a request and queries the API
-func (client Client) ProcessRequest(request *Request) (string, error) {
+func (client Client) ProcessRequest(request *Request) ([]byte, error) {
 
 	// Sign the request
 	client.SignRequest(request)
@@ -78,33 +87,47 @@ func (client Client) ProcessRequest(request *Request) (string, error) {
 	requestURL, err := request.SignedURL()
 
 	if err != nil {
-		return "", errors.New("amazonpa: cannot get the signed request URL")
+		return nil, errors.New("amazonpa: cannot get the signed request URL")
 	}
 
 	httpResponse, err = http.Get(requestURL)
 
 	if err != nil {
-		return "", errors.New("amazonpa: error processing the http request")
+		return nil, errors.New("amazonpa: error processing the http request")
 	}
 
 	contents, err = ioutil.ReadAll(httpResponse.Body)
 	httpResponse.Body.Close()
 
 	if err != nil {
-		return "", errors.New("amazonpa: response error")
+		return nil, errors.New("amazonpa: error while reading the server response")
 	}
 
-	return string(contents[:]), nil
+	return contents, nil
 }
 
 // ItemLookup performs an ItemLookup request
-func (client Client) ItemLookup(itemIDs []string, responseGroups []string, itemType string) {
+func (client Client) ItemLookup(query ItemLookupQuery) (*ItemLookupResponse, error) {
 
 	request := client.NewRequest("ItemLookup")
 
-	request.SetParameter("ItemId", strings.Join(itemIDs, ","))
-	request.SetParameter("ResponseGroup", strings.Join(responseGroups, ","))
-	// request.SetParameter("ItemType", itemType)
+	request.SetParameter("ItemId", strings.Join(query.ItemIDs, ","))
+	request.SetParameter("ResponseGroup", strings.Join(query.ResponseGroups, ","))
+	request.SetParameter("IdType", query.IDType)
+	request.SetParameter("MerchantId", query.MerchantID)
 
-	client.ProcessRequest(request)
+	xmlData, err := client.ProcessRequest(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var response ItemLookupResponse
+	xml.Unmarshal(xmlData, &response)
+
+	if response.Items.Request.IsValid != true {
+		return nil, errors.New("amazonpa: request is invalid")
+	}
+
+	return &response, nil
 }
