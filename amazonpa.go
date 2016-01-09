@@ -2,14 +2,17 @@ package amazonpa
 
 // Endpoints are the Amazon API endpoints by region
 var Endpoints = map[string]string{
-	"CA": "ecs.amazonaws.ca",
+	"BR": "webservices.amazon.com.br",
+	"CA": "webservices.amazon.ca",
 	"CN": "webservices.amazon.cn",
-	"DE": "ecs.amazonaws.de",
+	"DE": "webservices.amazon.de",
 	"ES": "webservices.amazon.es",
-	"FR": "ecs.amazonaws.fr",
+	"FR": "webservices.amazon.fr",
+	"IN": "webservices.amazon.in",
 	"IT": "webservices.amazon.it",
-	"JP": "ecs.amazonaws.jp",
-	"UK": "ecs.amazonaws.co.uk",
+	"JP": "webservices.amazon.co.jp",
+	"MX": "webservices.amazon.com.mx",
+	"UK": "webservices.amazon.co.uk",
 	"US": "webservices.amazon.com",
 }
 
