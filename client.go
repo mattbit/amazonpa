@@ -126,7 +126,7 @@ func (client Client) ItemLookup(query ItemLookupQuery) (*ItemLookupResponse, err
 	xml.Unmarshal(xmlData, &response)
 
 	if response.Items.Request.IsValid != true {
-		return nil, errors.New("amazonpa: request is invalid")
+		return &response, errors.New("amazonpa: request is invalid")
 	}
 
 	return &response, nil
