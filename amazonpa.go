@@ -18,3 +18,12 @@ var Endpoints = map[string]string{
 
 // EndpointURI is the fixed request URI of the API
 const EndpointURI = "/onca/xml"
+
+// Config describes the service configuration
+type Config struct {
+	AccessKey    string
+	AccessSecret string
+	AssociateTag string
+	Region       string
+	Secure       bool
+}

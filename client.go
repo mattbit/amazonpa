@@ -23,16 +23,12 @@ type ItemLookupQuery struct {
 
 // Client provides the functions to interact with the API
 type Client struct {
-	accessKeyID  string
-	secretKey    string
-	associateTag string
-	region       string
-	secure       bool
+	config Config
 }
 
 // NewClient returns a new Client
-func NewClient(accessKeyID string, secretKey string, associateTag string, region string, secure bool) *Client {
-	c := Client{accessKeyID, secretKey, associateTag, region, secure}
+func NewClient(config Config) *Client {
+	c := Client{config}
 
 	return &c
 }
@@ -42,19 +38,19 @@ func (client Client) NewRequest(operation string) *Request {
 
 	request := Request{}
 
-	if client.secure {
+	if client.config.Secure {
 		request.scheme = "https"
 	} else {
 		request.scheme = "http"
 	}
 
-	request.endpoint = Endpoints[client.region]
+	request.endpoint = Endpoints[client.config.Region]
 	request.endpointURI = EndpointURI
 
 	request.parameters = map[string]string{
 		"Service":        "AWSECommerceService",
-		"AWSAccessKeyId": client.accessKeyID,
-		"AssociateTag":   client.associateTag,
+		"AWSAccessKeyId": client.config.AccessKey,
+		"AssociateTag":   client.config.AssociateTag,
 		"Version":        "2013-08-01",
 		"Operation":      operation,
 		"Timestamp":      time.Now().Format(time.RFC3339),
@@ -67,7 +63,7 @@ func (client Client) NewRequest(operation string) *Request {
 func (client Client) SignRequest(request *Request) {
 	signable := fmt.Sprintf("GET\n%s\n%s\n%s", request.endpoint, request.endpointURI, request.QueryString())
 
-	hasher := hmac.New(sha256.New, []byte(client.secretKey))
+	hasher := hmac.New(sha256.New, []byte(client.config.AccessSecret))
 	hasher.Write([]byte(signable))
 
 	request.signature = base64.StdEncoding.EncodeToString(hasher.Sum(nil))

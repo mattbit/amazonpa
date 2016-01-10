@@ -6,7 +6,15 @@ import (
 )
 
 func newTestClient() *Client {
-	return NewClient("AKIAIOSFODNN7EXAMPLE", "1234567890", "mytag-20", "US", false)
+	config := Config{
+		"AKIAIOSFODNN7EXAMPLE",
+		"1234567890",
+		"mytag-20",
+		"US",
+		false,
+	}
+
+	return NewClient(config)
 }
 
 func TestRequestHasDefaultParameters(t *testing.T) {
