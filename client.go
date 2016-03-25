@@ -69,14 +69,20 @@ type BrowseNodeLookupQuery struct {
 
 // Client provides the functions to interact with the API
 type Client struct {
-	config Config
+	config     Config
+	httpClient *http.Client
 }
 
 // NewClient returns a new Client
 func NewClient(config Config) *Client {
-	c := Client{config}
+	c := Client{config: config, httpClient: http.DefaultClient}
 
 	return &c
+}
+
+// SetHTTPClient allows to set a custom *http.Client on the API client
+func (client *Client) SetHTTPClient(h *http.Client) {
+	client.httpClient = h
 }
 
 // NewRequest returns a request with basic parameters
@@ -132,7 +138,7 @@ func (client Client) ProcessRequest(request *Request) ([]byte, error) {
 		return nil, errors.New("amazonpa: cannot get the signed request URL")
 	}
 
-	httpResponse, err = http.Get(requestURL)
+	httpResponse, err = client.httpClient.Get(requestURL)
 
 	if err != nil {
 		return nil, errors.New("amazonpa: error processing the http request")
