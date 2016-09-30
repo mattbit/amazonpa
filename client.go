@@ -110,7 +110,33 @@ func (client Client) ItemLookup(query ItemLookupQuery) (*ItemLookupResponse, err
 	request.SetParameter("ItemId", strings.Join(query.ItemIDs, ","))
 	request.SetParameter("ResponseGroup", strings.Join(query.ResponseGroups, ","))
 	request.SetParameter("IdType", query.IDType)
+	request.SetParameter("SearchIndex", "All")
 	request.SetParameter("MerchantId", query.MerchantID)
+
+	xmlData, err := client.ProcessRequest(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var response ItemLookupResponse
+	xml.Unmarshal(xmlData, &response)
+
+	if response.Items.Request.IsValid != true {
+		return &response, errors.New("amazonpa: request is invalid")
+	}
+
+	return &response, nil
+}
+
+// ItemLookup performs an ItemLookup request
+func (client Client) ItemLookupByKeyword(keywords []string) (*ItemLookupResponse, error) {
+
+	request := client.NewRequest("ItemSearch")
+
+	request.SetParameter("ResponseGroup", "Large")
+	request.SetParameter("SearchIndex", "All")
+	request.SetParameter("Keywords", strings.ToLower((strings.Join(keywords, "_"))))
 
 	xmlData, err := client.ProcessRequest(request)
 
