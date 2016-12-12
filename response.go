@@ -45,16 +45,22 @@ type Item struct {
 
 // ItemAttributes response group
 type ItemAttributes struct {
-	Brand        string
-	Title        string
-	Feature      string
-	Manufacturer string
-	Model        string
-	ProductGroup string
-	Publisher    string
-	ReleaseDate  string
-	Studio       string
-	Warranty     string
+	Brand           string
+	Creator         string
+	Title           string
+	ListPrice       Price
+	Manufacturer    string
+	Publisher       string
+	NumberOfItems   int
+	PackageQuantity int
+	Feature         string
+	Model           string
+	ProductGroup    string
+	ReleaseDate     string
+	Studio          string
+	Warranty        string
+	Size            string
+	UPC             string
 }
 
 // Offer response attribute
@@ -95,12 +101,11 @@ type ItemLookupRequest struct {
 // ItemLookupResponse describes the API response for the ItemLookup operation
 type ItemLookupResponse struct {
 	Response
-
 	Items struct {
 		Request struct {
 			IsValid           bool
 			ItemLookupRequest ItemLookupRequest
 		}
-		Item Item
+		Items []Item `xml:"Item"`
 	}
 }
