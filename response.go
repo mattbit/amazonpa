@@ -35,12 +35,14 @@ type Price struct {
 
 // Item represents a product returned by the API
 type Item struct {
-	ASIN           string
-	URL            string
-	DetailPageURL  string
-	ItemAttributes ItemAttributes
-	OfferSummary   OfferSummary
-	Offers         Offers
+	ASIN             string
+	URL              string
+	DetailPageURL    string
+	ItemAttributes   ItemAttributes
+	OfferSummary     OfferSummary
+	Offers           Offers
+	Image            Image
+	EditorialReviews EditorialReviews
 }
 
 // ItemAttributes response group
