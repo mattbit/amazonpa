@@ -62,6 +62,11 @@ type ItemSearchQuery struct {
 	ResponseGroups        []string
 }
 
+type BrowseNodeLookupQuery struct {
+	BrowseNodeID   string
+	ResponseGroups []string
+}
+
 // Client provides the functions to interact with the API
 type Client struct {
 	config Config
@@ -219,6 +224,30 @@ func (client Client) ItemSearch(query ItemSearchQuery) (*ItemSearchResponse, err
 	}
 
 	var response ItemSearchResponse
+	xml.Unmarshal(xmlData, &response)
+
+	if response.Items.Request.IsValid != true {
+		return &response, errors.New("amazonpa: request is invalid")
+	}
+
+	return &response, nil
+}
+
+// ItemLookup performs an ItemLookup request
+func (client Client) BrowseNodeLookup(query BrowseNodeLookupQuery) (*BrowseNodeLookupResponse, error) {
+
+	request := client.NewRequest("BrowseNodeLookup")
+
+	request.SetParameter("BrowseNodeId", query.BrowseNodeID)
+	request.SetParameter("ResponseGroup", strings.Join(query.ResponseGroups, ","))
+
+	xmlData, err := client.ProcessRequest(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var response BrowseNodeLookupResponse
 	xml.Unmarshal(xmlData, &response)
 
 	if response.Items.Request.IsValid != true {
