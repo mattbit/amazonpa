@@ -177,7 +177,7 @@ func (client Client) ItemLookup(query ItemLookupQuery) (*ItemLookupResponse, err
 }
 
 // ItemLookup performs an ItemLookup request
-func (client Client) ItemLookupByKeyword(query ItemSearchQuery) (*ItemLookupResponse, error) {
+func (client Client) ItemSearch(query ItemSearchQuery) (*ItemSearchResponse, error) {
 
 	request := client.NewRequest("ItemSearch")
 
@@ -218,7 +218,7 @@ func (client Client) ItemLookupByKeyword(query ItemSearchQuery) (*ItemLookupResp
 		return nil, err
 	}
 
-	var response ItemLookupResponse
+	var response ItemSearchResponse
 	xml.Unmarshal(xmlData, &response)
 
 	if response.Items.Request.IsValid != true {
