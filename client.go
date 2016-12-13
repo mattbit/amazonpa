@@ -250,7 +250,7 @@ func (client Client) BrowseNodeLookup(query BrowseNodeLookupQuery) (*BrowseNodeL
 	var response BrowseNodeLookupResponse
 	xml.Unmarshal(xmlData, &response)
 
-	if response.Items.Request.IsValid != true {
+	if response.BrowseNodes.Request.IsValid != true {
 		return &response, errors.New("amazonpa: request is invalid")
 	}
 
