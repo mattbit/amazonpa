@@ -41,6 +41,9 @@ func (request Request) QueryString() string {
 
 	// Build the query string
 	for _, key := range keys {
+		if url.QueryEscape(request.parameters[key]) == "" {
+			continue // Skip empty params
+		}
 		queryString += fmt.Sprintf("%s=%s&", url.QueryEscape(key), url.QueryEscape(request.parameters[key]))
 	}
 
