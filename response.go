@@ -142,7 +142,7 @@ type ItemLookupResponse struct {
 			IsValid           bool
 			ItemLookupRequest ItemLookupRequest
 		}
-		Items []Item `xml:"Item"`
+		Item Item `xml:"Item"`
 	}
 }
 
