@@ -55,10 +55,13 @@ type Item struct {
 
 // BrowseNode represents a browse node returned by API
 type BrowseNode struct {
-	BrowseNodeId string
+	BrowseNodeID string `xml:"BrowseNodeId"`
 	Name         string
 	TopSellers   struct {
 		TopSeller []TopSeller
+	}
+	Ancestors struct {
+		BrowseNode []BrowseNode
 	}
 }
 
