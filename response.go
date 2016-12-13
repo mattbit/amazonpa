@@ -48,6 +48,9 @@ type Item struct {
 	MediumImage      Image
 	LargeImage       Image
 	EditorialReviews EditorialReviews
+	BrowseNodes      struct {
+		BrowseNode []BrowseNode
+	}
 }
 
 // BrowseNode represents a browse node returned by API
