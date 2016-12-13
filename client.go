@@ -215,7 +215,7 @@ func (client Client) ItemSearch(query ItemSearchQuery) (*ItemSearchResponse, err
 	request.SetParameter("Title", query.Title)
 	request.SetParameter("TruncateReviewsAt", query.TruncateReviewsAt)
 	request.SetParameter("VariationPage", query.VariationPage)
-	request.SetParameter("ResponseGroups", strings.Join(query.ResponseGroups, ","))
+	request.SetParameter("ResponseGroup", strings.Join(query.ResponseGroups, ","))
 
 	xmlData, err := client.ProcessRequest(request)
 
