@@ -28,7 +28,7 @@ type ItemLookupQuery struct {
 	ResponseGroups        []string
 }
 
-// ItemLookupQuery describes the allowed parameters for a ItemSearch request
+// ItemSearchQuery describes the allowed parameters for a ItemSearch request
 type ItemSearchQuery struct {
 	Actor                 string
 	Artist                string
