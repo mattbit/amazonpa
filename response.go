@@ -1,7 +1,5 @@
 package amazonpa
 
-import "encoding/xml"
-
 // Response describes the generic API Response
 type Response struct {
 	OperationRequest struct {
@@ -19,10 +17,9 @@ type Argument struct {
 
 // Image todo
 type Image struct {
-	XMLName xml.Name `xml:"MediumImage"`
-	URL     string
-	Height  uint16
-	Width   uint16
+	URL    string
+	Height uint16
+	Width  uint16
 }
 
 // Price describes the product price as
@@ -46,7 +43,10 @@ type Item struct {
 	ItemAttributes   ItemAttributes
 	OfferSummary     OfferSummary
 	Offers           Offers
-	Image            Image
+	SalesRank        int
+	SmallImage       Image
+	MediumImage      Image
+	LargeImage       Image
 	EditorialReviews EditorialReviews
 }
 
@@ -61,7 +61,10 @@ type BrowseNode struct {
 
 // ItemAttributes response group
 type ItemAttributes struct {
+	Binding         string
 	Brand           string
+	Color           string
+	EAN             string
 	Creator         string
 	Title           string
 	ListPrice       Price
@@ -125,10 +128,10 @@ type BrowseNodeLookupRequest struct {
 
 // ItemLookupRequest is the confirmation of a ItemLookup request
 type ItemLookupRequest struct {
-	IDType         string   `xml:"IdType"`
-	ItemID         string   `xml:"ItemId"`
-	ResponseGroups []string `xml:"ResponseGroup"`
-	VariationPage  string
+	IDType        string `xml:"IdType"`
+	ItemID        string `xml:"ItemId"`
+	ResponseGroup string `xml:"ResponseGroup"`
+	VariationPage string
 }
 
 // ItemLookupResponse describes the API response for the ItemLookup operation
@@ -145,9 +148,9 @@ type ItemLookupResponse struct {
 
 // ItemSearchRequest is the confirmation of a ItemSearch request
 type ItemSearchRequest struct {
-	Keywords       string   `xml:"Keywords"`
-	SearchIndex    string   `xml:"SearchIndex"`
-	ResponseGroups []string `xml:"ResponseGroup"`
+	Keywords      string `xml:"Keywords"`
+	SearchIndex   string `xml:"SearchIndex"`
+	ResponseGroup string `xml:"ResponseGroup"`
 }
 
 type ItemSearchResponse struct {
