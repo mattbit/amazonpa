@@ -1,7 +1,5 @@
 package amazonpa
 
-import "encoding/xml"
-
 // Response describes the generic API Response
 type Response struct {
 	OperationRequest struct {
@@ -19,10 +17,9 @@ type Argument struct {
 
 // Image todo
 type Image struct {
-	XMLName xml.Name `xml:"MediumImage"`
-	URL     string
-	Height  uint16
-	Width   uint16
+	URL    string
+	Height uint16
+	Width  uint16
 }
 
 // Price describes the product price as
@@ -33,28 +30,62 @@ type Price struct {
 	FormattedPrice string
 }
 
+type TopSeller struct {
+	ASIN  string
+	Title string
+}
+
 // Item represents a product returned by the API
 type Item struct {
-	ASIN           string
-	URL            string
-	DetailPageURL  string
-	ItemAttributes ItemAttributes
-	OfferSummary   OfferSummary
-	Offers         Offers
+	ASIN             string
+	URL              string
+	DetailPageURL    string
+	ItemAttributes   ItemAttributes
+	OfferSummary     OfferSummary
+	Offers           Offers
+	SalesRank        int
+	SmallImage       Image
+	MediumImage      Image
+	LargeImage       Image
+	EditorialReviews EditorialReviews
+	BrowseNodes      struct {
+		BrowseNode []BrowseNode
+	}
+}
+
+// BrowseNode represents a browse node returned by API
+type BrowseNode struct {
+	BrowseNodeID string `xml:"BrowseNodeId"`
+	Name         string
+	TopSellers   struct {
+		TopSeller []TopSeller
+	}
+	Ancestors struct {
+		BrowseNode []BrowseNode
+	}
 }
 
 // ItemAttributes response group
 type ItemAttributes struct {
-	Brand        string
-	Title        string
-	Feature      string
-	Manufacturer string
-	Model        string
-	ProductGroup string
-	Publisher    string
-	ReleaseDate  string
-	Studio       string
-	Warranty     string
+	Binding         string
+	Brand           string
+	Color           string
+	EAN             string
+	Creator         string
+	Title           string
+	ListPrice       Price
+	Manufacturer    string
+	Publisher       string
+	NumberOfItems   int
+	PackageQuantity int
+	Feature         string
+	Model           string
+	ProductGroup    string
+	ReleaseDate     string
+	Studio          string
+	Warranty        string
+	Size            string
+	UPC             string
 }
 
 // Offer response attribute
@@ -84,23 +115,71 @@ type OfferSummary struct {
 	TotalRefurbished int
 }
 
+// EditorialReview response attribute
+type EditorialReview struct {
+	Source  string
+	Content string
+}
+
+// EditorialReviews response group
+type EditorialReviews struct {
+	EditorialReview EditorialReview
+}
+
+// BrowseNodeLookupRequest is the confirmation of a BrowseNodeInfo request
+type BrowseNodeLookupRequest struct {
+	BrowseNodeId  string
+	ResponseGroup string
+}
+
 // ItemLookupRequest is the confirmation of a ItemLookup request
 type ItemLookupRequest struct {
-	IDType         string   `xml:"IdType"`
-	ItemID         string   `xml:"ItemId"`
-	ResponseGroups []string `xml:"ResponseGroup"`
-	VariationPage  string
+	IDType        string `xml:"IdType"`
+	ItemID        string `xml:"ItemId"`
+	ResponseGroup string `xml:"ResponseGroup"`
+	VariationPage string
 }
 
 // ItemLookupResponse describes the API response for the ItemLookup operation
 type ItemLookupResponse struct {
 	Response
-
 	Items struct {
 		Request struct {
 			IsValid           bool
 			ItemLookupRequest ItemLookupRequest
 		}
-		Item Item
+		Item Item `xml:"Item"`
+	}
+}
+
+// ItemSearchRequest is the confirmation of a ItemSearch request
+type ItemSearchRequest struct {
+	Keywords      string `xml:"Keywords"`
+	SearchIndex   string `xml:"SearchIndex"`
+	ResponseGroup string `xml:"ResponseGroup"`
+}
+
+type ItemSearchResponse struct {
+	Response
+	Items struct {
+		Request struct {
+			IsValid           bool
+			ItemSearchRequest ItemSearchRequest
+		}
+		Items                []Item `xml:"Item"`
+		TotalResult          int
+		TotalPages           int
+		MoreSearchResultsUrl string
+	}
+}
+
+type BrowseNodeLookupResponse struct {
+	Response
+	BrowseNodes struct {
+		Request struct {
+			IsValid                 bool
+			BrowseNodeLookupRequest BrowseNodeLookupRequest
+		}
+		BrowseNode BrowseNode
 	}
 }
