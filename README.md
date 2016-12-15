@@ -6,7 +6,7 @@ The library does not cover all the functionality of the PA API, but feel free to
 
 ## Example
 
-```
+```go
 package main
 
 import (
