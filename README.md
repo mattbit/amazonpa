@@ -12,7 +12,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/amazonpa"
+	"github.com/mattbit/amazonpa"
 )
 
 func main() {
