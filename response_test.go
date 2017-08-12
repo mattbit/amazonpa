@@ -68,6 +68,9 @@ func TestParseItemLookupResponse(t *testing.T) {
 	assertEqualInt(t, int(response.Items.Item.LargeImage.Height), 500, "Bad SmallImage/Height")
 	assertEqualInt(t, int(response.Items.Item.LargeImage.Width), 344, "Bad SmallImage/Width")
 
+	assertEqualStr(t, response.Items.Item.ImageSets.ImageSet[0].Category, "primary", "Bad ImageSet category")
+	assertEqualInt(t, int(response.Items.Item.ImageSets.ImageSet[0].SwatchImage.Height), 30, "Bad SwatchImage")
+
 	// Items/Item/ItemAttributes
 	assertEqualStr(t, response.Items.Item.ItemAttributes.Binding, "Tools & Home Improvement", "Bad Binding")
 	assertEqualStr(t, response.Items.Item.ItemAttributes.Brand, "Grohe", "Bad Binding")
