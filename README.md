@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mattbit/amazonpa.svg?branch=master)](https://travis-ci.org/mattbit/amazonpa)
+
 # Amazon PA
 
 A Go lang library to interact with Amazon Product Advertising API.
