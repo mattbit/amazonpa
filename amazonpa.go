@@ -1,5 +1,7 @@
 package amazonpa
 
+import "time"
+
 // Endpoints are the Amazon API endpoints by region
 var Endpoints = map[string]string{
 	"BR": "webservices.amazon.com.br",
@@ -21,9 +23,10 @@ const EndpointURI = "/onca/xml"
 
 // Config describes the service configuration
 type Config struct {
-	AccessKey    string
-	AccessSecret string
-	AssociateTag string
-	Region       string
-	Secure       bool
+	AccessKey      string
+	AccessSecret   string
+	AssociateTag   string
+	Region         string
+	Secure         bool
+	DefaultTimeout time.Duration
 }
