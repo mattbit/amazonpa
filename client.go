@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -116,7 +117,7 @@ func (client Client) SignRequest(request *Request) {
 }
 
 // ProcessRequest takes a request and queries the API
-func (client Client) ProcessRequest(request *Request) ([]byte, error) {
+func (client Client) ProcessRequest(request *Request, timeout time.Duration) ([]byte, error) {
 
 	// Sign the request
 	client.SignRequest(request)
@@ -127,17 +128,24 @@ func (client Client) ProcessRequest(request *Request) ([]byte, error) {
 	var contents []byte
 
 	requestURL, err := request.SignedURL()
-
 	if err != nil {
 		return nil, errors.New("amazonpa: cannot get the signed request URL")
 	}
 
-	httpResponse, err = http.Get(requestURL)
-
-	if err != nil {
-		return nil, errors.New("amazonpa: error processing the http request")
+	httpClient := &http.Client{
+		Timeout: timeout,
 	}
 
+	req, err := http.NewRequest("GET", requestURL, nil)
+	if err != nil {
+		return nil, errors.New("amazonpa: error on building request")
+	}
+
+	httpResponse, err = httpClient.Do(req)
+	if err != nil {
+		log.Fatal("Do: ", err)
+		return nil, errors.New(fmt.Sprintf("amazonpa: error on request: %s - error: %s", requestURL, err.Error()))
+	}
 	contents, err = ioutil.ReadAll(httpResponse.Body)
 	httpResponse.Body.Close()
 
@@ -148,8 +156,8 @@ func (client Client) ProcessRequest(request *Request) ([]byte, error) {
 	return contents, nil
 }
 
-// ItemLookup performs an ItemLookup request
-func (client Client) ItemLookup(query ItemLookupQuery) (*ItemLookupResponse, error) {
+// ItemLookupWithTimeout performs an ItemLookup request with timeout specified
+func (client Client) ItemLookupWithTimeout(query ItemLookupQuery, timeout time.Duration) (*ItemLookupResponse, error) {
 
 	request := client.NewRequest("ItemLookup")
 
@@ -165,7 +173,7 @@ func (client Client) ItemLookup(query ItemLookupQuery) (*ItemLookupResponse, err
 	request.SetParameter("VariationPage", query.VariationPage)
 	request.SetParameter("ResponseGroup", strings.Join(query.ResponseGroups, ","))
 
-	xmlData, err := client.ProcessRequest(request)
+	xmlData, err := client.ProcessRequest(request, timeout)
 
 	if err != nil {
 		return nil, err
@@ -181,8 +189,18 @@ func (client Client) ItemLookup(query ItemLookupQuery) (*ItemLookupResponse, err
 	return &response, nil
 }
 
-// ItemLookup performs an ItemLookup request
+// ItemLookup performs an ItemLookup request using DefaultTimeout
+func (client Client) ItemLookup(query ItemLookupQuery) (*ItemLookupResponse, error) {
+	return client.ItemLookupWithTimeout(query, client.config.DefaultTimeout)
+}
+
+// ItemLookup performs an ItemLookup request using DefaultTimeout
 func (client Client) ItemSearch(query ItemSearchQuery) (*ItemSearchResponse, error) {
+	return client.ItemSearchWithTimeout(query, client.config.DefaultTimeout)
+}
+
+// ItemLookup performs an ItemLookup request using specified Timeout
+func (client Client) ItemSearchWithTimeout(query ItemSearchQuery, timeout time.Duration) (*ItemSearchResponse, error) {
 
 	request := client.NewRequest("ItemSearch")
 
@@ -217,7 +235,7 @@ func (client Client) ItemSearch(query ItemSearchQuery) (*ItemSearchResponse, err
 	request.SetParameter("VariationPage", query.VariationPage)
 	request.SetParameter("ResponseGroup", strings.Join(query.ResponseGroups, ","))
 
-	xmlData, err := client.ProcessRequest(request)
+	xmlData, err := client.ProcessRequest(request, timeout)
 
 	if err != nil {
 		return nil, err
@@ -233,15 +251,20 @@ func (client Client) ItemSearch(query ItemSearchQuery) (*ItemSearchResponse, err
 	return &response, nil
 }
 
-// ItemLookup performs an ItemLookup request
+// ItemLookup performs an ItemLookup request with default timeout
 func (client Client) BrowseNodeLookup(query BrowseNodeLookupQuery) (*BrowseNodeLookupResponse, error) {
+	return client.BrowseNodeLookupWithTimeout(query, client.config.DefaultTimeout)
+}
+
+// ItemLookup performs an ItemLookup request using specified timeout
+func (client Client) BrowseNodeLookupWithTimeout(query BrowseNodeLookupQuery, timeout time.Duration) (*BrowseNodeLookupResponse, error) {
 
 	request := client.NewRequest("BrowseNodeLookup")
 
 	request.SetParameter("BrowseNodeId", query.BrowseNodeID)
 	request.SetParameter("ResponseGroup", strings.Join(query.ResponseGroups, ","))
 
-	xmlData, err := client.ProcessRequest(request)
+	xmlData, err := client.ProcessRequest(request, timeout)
 
 	if err != nil {
 		return nil, err

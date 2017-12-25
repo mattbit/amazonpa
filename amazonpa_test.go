@@ -12,6 +12,7 @@ func newTestClient() *Client {
 		"mytag-20",
 		"US",
 		false,
+		time.Duration(30 * time.Second),
 	}
 
 	return NewClient(config)

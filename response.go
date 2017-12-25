@@ -68,7 +68,7 @@ type BrowseNode struct {
 
 // ItemAttributes response group
 type ItemAttributes struct {
-	Author		string
+	Author          string
 	Binding         string
 	Brand           string
 	Color           string
